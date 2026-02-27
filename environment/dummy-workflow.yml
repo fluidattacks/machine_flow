@@ -1,0 +1,33 @@
+# -------------------------------------------------------
+# GitHub Actions workflow with dummy secrets
+# -------------------------------------------------------
+name: Deploy Application
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      OPENAI_API_KEY: sk-proj-AbCdEfGhIjKlMnOpQrStUvWxYz1234567890
+      CLOUDFLARE_API_TOKEN: CFAT-ZYXWVUTSRQPONMLKJIHGFEDCBA123456
+      SONAR_TOKEN: squ_abcdefabcdefabcdefabcdefabcdefabcdef
+      DOCKERHUB_TOKEN: dckr_pat_abcdefghijklmnopqrstuvwxyz1234
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run SonarQube Scan
+        run: |
+          sonar-scanner \
+            -Dsonar.login=${SONAR_TOKEN}
+
+      - name: Deploy to Cloudflare
+        run: |
+          curl -X POST \
+            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            https://api.cloudflare.com/client/v4/zones
