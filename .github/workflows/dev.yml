@@ -1,12 +1,40 @@
 # Test workflow for machine
-name: Standalone CLI
-on: [push, pull_request]
+name: Security Scans
+on:
+  push:
+  schedule:
+    - cron: '0 8 * * 1'
+
 jobs:
-   machineStandalone:
-      runs-on: ubuntu-latest
-      steps:
-         - uses: actions/checkout@f095bcc56b7c2baf48f3ac70d6d6782f4f553222
-         - uses: docker://docker.io/fluidattacks/sast:latest
-           name: machineStandalone
-           with:
-             args: sast scan .
+  sast:
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: fluidattacks/sast-action@1.1.0
+        id: scan
+
+      - name: Upload results to GitHub Security tab
+        if: always()
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: ${{ steps.scan.outputs.sarif_file }}
+
+  secret-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: fluidattacks/secret-scan-action@main
+        id: scan
+
+      - name: Upload results to GitHub Security tab
+        if: always()
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: ${{ steps.scan.outputs.sarif_file }}
