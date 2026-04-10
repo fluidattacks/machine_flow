@@ -9,6 +9,8 @@ jobs:
   sast:
     if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -25,6 +27,8 @@ jobs:
 
   secret-scan:
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write
     steps:
       - uses: actions/checkout@v4
         with:
