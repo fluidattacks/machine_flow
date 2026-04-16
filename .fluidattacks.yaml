@@ -3,7 +3,7 @@ strict: false
 output:
   file_path: results.sarif
   format: SARIF
-sniffs:
+ss:
   include:
     - .
   exclude:

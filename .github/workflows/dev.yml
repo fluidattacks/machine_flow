@@ -36,6 +36,8 @@ jobs:
 
       - uses: fluidattacks/secret-scan-action@main
         id: scan
+        with:
+          scanner_mode: full
 
       - name: Upload results to GitHub Security tab
         if: always()
