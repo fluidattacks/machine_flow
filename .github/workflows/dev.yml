@@ -24,6 +24,10 @@ jobs:
         with:
           sarif_file: ${{ steps.scan.outputs.sarif_file }}
 
+      - name: Fail if vulnerabilities found
+        if: steps.scan.outputs.vulnerabilities_found == 'true'
+        run: exit 1
+
   sca-scan:
     runs-on: ubuntu-latest
     permissions:
@@ -42,6 +46,10 @@ jobs:
         with:
           sarif_file: ${{ steps.scan.outputs.sarif_file }}
 
+      - name: Fail if vulnerabilities found
+        if: steps.scan.outputs.vulnerabilities_found == 'true'
+        run: exit 1
+
   dast-scan:
     runs-on: ubuntu-latest
     permissions:
@@ -51,6 +59,10 @@ jobs:
 
       - uses: fluidattacks/dast-action@0.1.0
         id: scan
+
+      - name: Fail if vulnerabilities found
+        if: steps.scan.outputs.vulnerabilities_found == 'true'
+        run: exit 1
 
   secret-scan:
     runs-on: ubuntu-latest
