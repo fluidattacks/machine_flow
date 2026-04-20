@@ -1,5 +1,5 @@
 language: EN
-strictness_threshold: low
+strict: true
 output:
   file_path: fluidattacks-results.sarif
   format: SARIF
