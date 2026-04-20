@@ -52,12 +52,6 @@ jobs:
       - uses: fluidattacks/dast-action@0.1.0
         id: scan
 
-      - name: Upload results to GitHub Security tab
-        if: always()
-        uses: github/codeql-action/upload-sarif@v4
-        with:
-          sarif_file: ${{ steps.scan.outputs.sarif_file }}
-
   secret-scan:
     runs-on: ubuntu-latest
     permissions:
