@@ -2,12 +2,9 @@
 name: Security Scans
 on:
   push:
-  schedule:
-    - cron: '0 8 * * 1'
 
 jobs:
   sast:
-    if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
     permissions:
       security-events: write
@@ -25,19 +22,51 @@ jobs:
         with:
           sarif_file: ${{ steps.scan.outputs.sarif_file }}
 
+  sca-scan:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: fluidattacks/sca-action@main
+        id: scan
+        with:
+          scanner_mode: full
+
+      - name: Upload results to GitHub Security tab
+        if: always()
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: ${{ steps.scan.outputs.sarif_file }}
+
   secret-scan:
     runs-on: ubuntu-latest
     permissions:
       security-events: write
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - uses: fluidattacks/secret-scan-action@main
         id: scan
         with:
           scanner_mode: full
+
+      - name: Upload results to GitHub Security tab
+        if: always()
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: ${{ steps.scan.outputs.sarif_file }}
+
+  dast-scan:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: fluidattacks/dast-action@main
+        id: scan
 
       - name: Upload results to GitHub Security tab
         if: always()
