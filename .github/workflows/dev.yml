@@ -13,8 +13,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: fluidattacks/sast-action@1.1.0
+      - uses: fluidattacks/sast-action@1.2.0
         id: scan
+        with:
+          scanner_mode: full
 
       - name: Upload results to GitHub Security tab
         if: always()
@@ -29,10 +31,26 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: fluidattacks/sca-action@main
+      - uses: fluidattacks/sca-action@1.1.0
         id: scan
         with:
           scanner_mode: full
+
+      - name: Upload results to GitHub Security tab
+        if: always()
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: ${{ steps.scan.outputs.sarif_file }}
+
+  dast-scan:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: fluidattacks/dast-action@0.1.0
+        id: scan
 
       - name: Upload results to GitHub Security tab
         if: always()
@@ -51,22 +69,6 @@ jobs:
         id: scan
         with:
           scanner_mode: full
-
-      - name: Upload results to GitHub Security tab
-        if: always()
-        uses: github/codeql-action/upload-sarif@v4
-        with:
-          sarif_file: ${{ steps.scan.outputs.sarif_file }}
-
-  dast-scan:
-    runs-on: ubuntu-latest
-    permissions:
-      security-events: write
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: fluidattacks/dast-action@main
-        id: scan
 
       - name: Upload results to GitHub Security tab
         if: always()
