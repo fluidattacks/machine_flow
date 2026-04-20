@@ -1,7 +1,7 @@
 # Test workflow for machine
 name: Security Scans
 on:
-  push:
+  pull_request:
 
 jobs:
   sast:
@@ -10,8 +10,6 @@ jobs:
       security-events: write
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - uses: fluidattacks/sast-action@1.2.0
         id: scan
